@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Utility Suite (Polished Edition)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111827; /* Even darker background */
+        }
+        .usp-font {
+            font-family: 'Poppins', sans-serif;
+        }
+        .glass-card {
+            background: rgba(31, 41, 55, 0.5); /* gray-800 with opacity */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tab-btn.active {
+            border-bottom-width: 3px;
+            background-color: rgba(55, 65, 81, 0.5); /* gray-700 with opacity */
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #60a5fa; /* blue-400 */
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .file-input-dark::file-selector-button {
+            background-color: #374151; /* gray-700 */
+            border: 1px solid #4b5563; /* gray-600 */
+            color: #d1d5db; /* gray-300 */
+            transition: background-color 0.2s;
+        }
+        .file-input-dark::file-selector-button:hover {
+            background-color: #4b5563; /* gray-600 */
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #374151; /* gray-700 */
+            height: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -4px;
+            background-color: #9ca3af; /* gray-400 */
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        input[type="range"]:hover::-webkit-slider-thumb {
+            background-color: #d1d5db; /* gray-300 */
+        }
+        .progress-bar {
+            background-color: #374151;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            background-color: #3b82f6;
+            height: 100%;
+            transition: width 0.3s ease-in-out;
+        }
+        /* Cropper styles */
+        .cropper-container {
+            position: relative;
+            overflow: hidden;
+            touch-action: none;
+        }
+        #cropper-box {
+            position: absolute;
+            border: 2px dashed #fff;
+            box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
+            cursor: move;
+            touch-action: none;
+        }
+        .resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #fff;
+            border: 1px solid #333;
+            border-radius: 50%;
+        }
+        .resize-handle.br {
+            bottom: -6px;
+            right: -6px;
+            cursor: se-resize;
+        }
+        /* Download Notification Toast */
+        #download-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translate(-50%, -150%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 9999;
+        }
+        #download-toast.show {
+            transform: translate(-50%, 0);
+        }
+    </style>
+</head>
+<body class="text-gray-200 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-6xl glass-card rounded-2xl shadow-2xl overflow-hidden">
+        <div class="p-6 md:p-8 border-b border-gray-700 text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-white">Image Utility Suite</h1>
+            <p class="mt-2 text-gray-400">High-performance tools for your image processing needs.</p>
+            <h2 class="usp-font mt-4 text-xl font-bold text-green-400 tracking-wider uppercase">100% Privacy 🔒</h2>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-700 bg-gray-900/30 flex-wrap">
+            <button id="tab-compress" class="tab-btn flex-1 py-4 px-2 text-center font-semibold text-sm md:text-base text-gray-400 hover:bg-gray-700/50 focus:outline-none">Compressor</button>
+            <button id="tab-passport" class="tab-btn flex-1 py-4 px-2 text-center font-semibold text-sm md:text-base text-gray-400 hover:bg-gray-700/50 focus:outline-none">Passport Photo</button>
+            <button id="tab-background" class="tab-btn flex-1 py-4 px-2 text-center font-semibold text-sm md:text-base text-gray-400 hover:bg-gray-700/50 focus:outline-none">BG Remover</button>
+            <button id="tab-convert" class="tab-btn flex-1 py-4 px-2 text-center font-semibold text-sm md:text-base text-gray-400 hover:bg-gray-700/50 focus:outline-none">Converter</button>
+        </div>
+
+        <div class="p-6 md:p-8">
+            <!-- Tool Sections will be dynamically loaded here -->
+            <div id="section-compress" class="tab-section hidden"></div>
+            <div id="section-passport" class="tab-section hidden"></div>
+            <div id="section-background" class="tab-section hidden"></div>
+            <div id="section-convert" class="tab-section hidden"></div>
+        </div>
+        
+        <footer class="p-4 border-t border-gray-700 bg-gray-900/30 text-center">
+            <p class="text-sm text-gray-500">A Webpage By Nitin</p>
+        </footer>
+    </div>
+
+    <!-- Download Notification Toast -->
+    <div id="download-toast" class="glass-card p-3 rounded-lg shadow-lg">
+        <p class="font-semibold text-white">Download Started</p>
+    </div>
+    
+    <script type="module">
+        // By using a modern ES module import, the browser automatically handles caching.
+        // After the first use, the 'removeBackground' library will be loaded from the browser cache,
+        // making subsequent uses much faster.
+        import removeBackground from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.0.0/dist/browser.mjs";
+
+        // --- Templates for Dynamic Loading ---
+        const compressorToolHTML = `
+            <div class="space-y-6">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-white">1. Upload Image</h2>
+                    <input type="file" id="compress-input" accept="image/jpeg, image/png, image/webp" class="file-input-dark block w-full max-w-md text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold">
+                </div>
+                <div id="compressor-main" class="hidden space-y-6">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-white">2. Set Compression</h2>
+                            <button id="compress-mode-toggle" class="text-sm text-blue-400 hover:text-blue-300">Switch to Target Size</button>
+                        </div>
+                        <div id="compress-mode-amount" class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <input type="range" id="compression-slider" min="0" max="100" value="20" class="w-full">
+                                <span id="compression-value" class="font-bold text-lg text-white w-16 text-center">20%</span>
+                                <button id="compress-btn" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-600 transition-colors flex-shrink-0">Compress</button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Higher percentage means more compression (smaller file).</p>
+                        </div>
+                        <div id="compress-mode-size" class="hidden space-y-4">
+                            <div class="flex items-center gap-4">
+                                <label for="target-size" class="text-sm font-medium text-gray-300">Target Size (KB):</label>
+                                <input type="number" id="target-size" value="100" class="block w-32 rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white">
+                                <button id="compress-size-btn" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-600 transition-colors flex-shrink-0">Compress</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6 pt-6">
+                        <div class="text-center p-4 glass-card rounded-lg">
+                            <h3 class="text-lg font-bold text-white mb-2">Before</h3>
+                            <div id="compress-preview-before" class="min-h-[200px] flex items-center justify-center"><p class="text-gray-500">Original image</p></div>
+                            <div id="compress-info-before" class="mt-2 text-sm text-gray-300"></div>
+                        </div>
+                        <div class="text-center p-4 glass-card rounded-lg">
+                            <h3 class="text-lg font-bold text-white mb-2">After</h3>
+                            <div id="compress-preview-after" class="min-h-[200px] flex items-center justify-center"><p class="text-gray-500">Compressed result</p></div>
+                            <div id="compress-info-after" class="mt-2 text-sm font-bold"></div>
+                            <a id="download-compressed-btn" href="#" download class="hidden mt-4 inline-block bg-gray-200 text-gray-900 font-bold py-2 px-6 rounded-lg hover:bg-white transition-colors">Download</a>
+                        </div>
+                    </div>
+                </div>`;
+        const passportToolHTML = `
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-white">1. Upload & Configure</h2>
+                    <input type="file" id="passport-input" accept="image/*" class="file-input-dark block w-full text-sm mb-4">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div><label for="passport-width" class="block text-sm font-medium text-gray-300">Width</label><input type="number" id="passport-width" value="3.5" class="mt-1 block w-full rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white"></div>
+                        <div><label for="passport-height" class="block text-sm font-medium text-gray-300">Height</label><input type="number" id="passport-height" value="4.5" class="mt-1 block w-full rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white"></div>
+                        <div><label for="passport-units" class="block text-sm font-medium text-gray-300">Units</label><select id="passport-units" class="mt-1 block w-full rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white"><option value="cm">cm</option><option value="in">in</option><option value="px">px</option></select></div>
+                        <div><label for="passport-dpi" class="block text-sm font-medium text-gray-300">DPI</label><input type="number" id="passport-dpi" value="300" class="mt-1 block w-full rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white"></div>
+                    </div>
+                    <div id="passport-cropper-container" class="cropper-container w-full bg-gray-800/50 rounded-lg flex items-center justify-center min-h-[300px]"><p class="text-gray-400 p-4 text-center">Upload an image to start cropping.</p><img id="passport-preview-img" class="hidden max-w-full max-h-full object-contain"/><div id="cropper-box" class="hidden"><div class="resize-handle br"></div></div></div>
+                    <button id="passport-btn" class="mt-4 w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 disabled:bg-gray-600">Create Photo</button>
+                </div>
+                <div><h2 class="text-xl font-semibold mb-4 text-white">2. Result</h2><div id="passport-result" class="glass-card rounded-lg p-4 min-h-[150px] flex items-center justify-center"><p class="text-gray-400">Your passport photo will appear here.</p></div></div>
+            </div>`;
+        const backgroundToolHTML = `
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-white">1. Upload & Configure</h2>
+                    <div class="space-y-4">
+                        <input type="file" id="bg-input" accept="image/*" class="file-input-dark block w-full text-sm">
+                        <div id="bg-preview-area" class="hidden"></div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300">Background Color</label>
+                            <div class="mt-1 flex items-center gap-2">
+                                <input type="color" id="bg-color-picker" value="#ffffff" class="w-10 h-10 rounded-lg border-gray-600">
+                                <button class="bg-color-btn p-2 rounded-lg border border-gray-500" data-color="#ffffff" style="background-color: #ffffff;"></button>
+                                <button class="bg-color-btn p-2 rounded-lg border border-gray-500" data-color="#0d6efd" style="background-color: #0d6efd;"></button>
+                                <button class="bg-color-btn p-2 rounded-lg border border-gray-500" data-color="#dc3545" style="background-color: #dc3545;"></button>
+                            </div>
+                        </div>
+                        <button id="bg-remove-btn" class="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-700 disabled:bg-gray-600">Remove Background</button>
+                    </div>
+                    <div class="mt-4 text-xs text-gray-400 p-3 bg-gray-800/50 rounded-lg">
+                        <strong>Note:</strong> This tool runs in your browser for 100% privacy. Results work best with clear subjects (e.g., people, products). Complex images with fine details like hair may not be perfect.
+                    </div>
+                    <div id="bg-progress-container" class="mt-4 space-y-2 hidden"><p id="bg-progress-label" class="text-sm text-center text-gray-300"></p><div class="progress-bar w-full h-2"><div id="bg-progress-bar" class="progress-bar-inner w-0"></div></div></div>
+                </div>
+                <div><h2 class="text-xl font-semibold mb-4 text-white">2. Result</h2><div id="bg-result" class="glass-card rounded-lg p-4 min-h-[150px] flex items-center justify-center"><p class="text-gray-400">Your final image will appear here.</p></div></div>
+            </div>`;
+        const convertToolHTML = `
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-white">1. Upload & Select Format</h2>
+                    <div class="space-y-4">
+                        <input type="file" id="convert-input" accept="image/*" class="file-input-dark block w-full text-sm">
+                        <div id="convert-preview-area" class="hidden"></div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300">Convert to:</label>
+                            <fieldset class="mt-2"><div class="flex space-x-4">
+                                <label class="flex items-center"><input name="convert-format" type="radio" value="jpeg" class="h-4 w-4 border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-700" checked><span class="ml-2 text-sm text-gray-300">JPG</span></label>
+                                <label class="flex items-center"><input name="convert-format" type="radio" value="png" class="h-4 w-4 border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-700"><span class="ml-2 text-sm text-gray-300">PNG</span></label>
+                                <label class="flex items-center"><input name="convert-format" type="radio" value="webp" class="h-4 w-4 border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-700"><span class="ml-2 text-sm text-gray-300">WEBP</span></label>
+                            </div></fieldset>
+                        </div>
+                        <button id="convert-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 disabled:bg-gray-600">Convert Image</button>
+                    </div>
+                </div>
+                <div><h2 class="text-xl font-semibold mb-4 text-white">2. Result</h2><div id="convert-result" class="glass-card rounded-lg p-4 min-h-[150px] flex items-center justify-center"><p class="text-gray-400">Your converted image will appear here.</p></div></div>
+            </div>`;
+
+        // --- UI & Event Handling ---
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const sections = document.querySelectorAll('.tab-section');
+            const tabColors = { compress: 'blue', passport: 'green', background: 'red', convert: 'purple' };
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.id.split('-')[1];
+                    const newColor = tabColors[tabName];
+                    
+                    tabs.forEach(t => {
+                        const color = tabColors[t.id.split('-')[1]];
+                        t.classList.remove(`border-${color}-500`, `text-${color}-400`, 'active');
+                        t.classList.add('text-gray-400', 'hover:bg-gray-700/50');
+                    });
+                    
+                    sections.forEach(s => s.classList.add('hidden'));
+                    
+                    tab.classList.add(`border-${newColor}-500`, `text-${newColor}-400`, 'active');
+                    tab.classList.remove('text-gray-400');
+                    
+                    const targetSection = document.getElementById(`section-${tabName}`);
+                    targetSection.classList.remove('hidden');
+                    
+                    if (!targetSection.dataset.loaded) {
+                        if (tabName === 'compress') targetSection.innerHTML = compressorToolHTML;
+                        else if (tabName === 'passport') targetSection.innerHTML = passportToolHTML;
+                        else if (tabName === 'background') targetSection.innerHTML = backgroundToolHTML;
+                        else if (tabName === 'convert') targetSection.innerHTML = convertToolHTML;
+                        
+                        setupTool(tabName);
+                        targetSection.dataset.loaded = 'true';
+                    }
+                });
+            });
+            document.getElementById('tab-compress').click();
+        }
+
+        function setupTool(toolName) {
+            if (toolName === 'compress') setupCompressorTool();
+            else if (toolName === 'passport') setupPassportTool();
+            else if (toolName === 'background') setupBackgroundTool();
+            else if (toolName === 'convert') setupConvertTool();
+        }
+
+        function showSpinner(container) {
+            container.innerHTML = `<div class="flex items-center justify-center p-4"><div class="spinner"></div></div>`;
+        }
+        
+        function showError(container, message) {
+            container.innerHTML = `<p class="text-red-400 font-semibold text-center p-4">${message}</p>`;
+        }
+        
+        function displayImagePreview(container, file, image) {
+            container.classList.remove('hidden');
+            container.innerHTML = `
+                <div class="p-4 glass-card rounded-lg mt-4">
+                    <h3 class="text-lg font-semibold text-white mb-2">Preview</h3>
+                    <div class="text-center space-y-2">
+                        <img src="${image.src}" class="max-w-full max-h-48 mx-auto rounded-lg">
+                        <p class="text-sm font-medium text-gray-300">${file.name}</p>
+                        <p class="text-xs text-gray-400">${image.width} x ${image.height} &middot; ${formatBytes(file.size)}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayResult(container, image, fileName, newSize) {
+            container.innerHTML = `
+                <div class="text-center space-y-2">
+                    <img src="${image.src}" class="max-w-full max-h-48 mx-auto rounded-lg shadow-md" alt="Result Image">
+                    <div class="text-sm">
+                        <p class="font-semibold text-white">${fileName}</p>
+                        <p class="text-gray-400">${image.width} x ${image.height}</p>
+                        <p class="font-bold text-green-400">${formatBytes(newSize)}</p>
+                    </div>
+                    <a href="${image.src}" download="${fileName}" class="download-link inline-block bg-gray-200 text-gray-900 font-bold py-2 px-6 rounded-lg hover:bg-white transition-colors">Download</a>
+                </div>
+            `;
+             container.querySelector('.download-link').addEventListener('click', showDownloadNotification);
+        }
+        
+        function formatBytes(bytes, decimals = 2) {
+            if (!+bytes) return '0 Bytes'
+            const k = 1024
+            const dm = decimals < 0 ? 0 : decimals
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+            const i = Math.floor(Math.log(bytes) / Math.log(k))
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+        }
+
+        function showDownloadNotification() {
+            const toast = document.getElementById('download-toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // --- Compressor Logic ---
+        function setupCompressorTool() {
+            let originalImageBlob = null;
+            const compressInput = document.getElementById('compress-input');
+            const compressorMain = document.getElementById('compressor-main');
+            const previewBefore = document.getElementById('compress-preview-before');
+            const infoBefore = document.getElementById('compress-info-before');
+            const previewAfter = document.getElementById('compress-preview-after');
+            const infoAfter = document.getElementById('compress-info-after');
+            const downloadBtn = document.getElementById('download-compressed-btn');
+            const compressBtn = document.getElementById('compress-btn');
+            const compressSizeBtn = document.getElementById('compress-size-btn');
+            const compressionSlider = document.getElementById('compression-slider');
+            const compressionValue = document.getElementById('compression-value');
+            const targetSizeInput = document.getElementById('target-size');
+            const modeToggleBtn = document.getElementById('compress-mode-toggle');
+            const modeAmountDiv = document.getElementById('compress-mode-amount');
+            const modeSizeDiv = document.getElementById('compress-mode-size');
+            let currentMode = 'amount';
+
+            compressInput.addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (!file) { compressorMain.classList.add('hidden'); return; }
+                originalImageBlob = file;
+                const reader = new FileReader();
+                reader.onload = event => {
+                    const img = new Image();
+                    img.onload = () => {
+                        previewBefore.innerHTML = `<img src="${img.src}" class="max-w-full max-h-48 object-contain rounded-lg">`;
+                        infoBefore.innerHTML = `<p>${img.width} x ${img.height}</p><p class="font-bold">${formatBytes(file.size)}</p>`;
+                        compressorMain.classList.remove('hidden');
+                        previewAfter.innerHTML = `<p class="text-gray-500">Compressed result</p>`;
+                        infoAfter.textContent = '';
+                        downloadBtn.classList.add('hidden');
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            compressionSlider.addEventListener('input', () => {
+                compressionValue.textContent = `${compressionSlider.value}%`;
+            });
+            
+            modeToggleBtn.addEventListener('click', () => {
+                currentMode = currentMode === 'amount' ? 'size' : 'amount';
+                modeAmountDiv.classList.toggle('hidden');
+                modeSizeDiv.classList.toggle('hidden');
+                modeToggleBtn.textContent = currentMode === 'amount' ? 'Switch to Target Size' : 'Switch to Compression Amount';
+            });
+
+            const handleCompression = async (isBySize) => {
+                if (!originalImageBlob) {
+                    showError(previewAfter, "Please upload an image first");
+                    return;
+                }
+                showSpinner(previewAfter);
+                infoAfter.textContent = '';
+                downloadBtn.classList.add('hidden');
+                
+                try {
+                    const img = await createImageBitmap(originalImageBlob);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+
+                    let compressedBlob;
+
+                    if (isBySize) {
+                        const targetSize = parseInt(targetSizeInput.value, 10) * 1024;
+                        if (isNaN(targetSize) || targetSize <= 0) {
+                            showError(previewAfter, "Invalid target size"); return;
+                        }
+                        const mimeType = 'image/jpeg';
+                        let minQuality = 0, maxQuality = 1, bestBlob = null;
+                        for (let i = 0; i < 8; i++) {
+                            const quality = (minQuality + maxQuality) / 2;
+                            const blob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, quality));
+                            if (blob.size <= targetSize) { bestBlob = blob; minQuality = quality; } 
+                            else { maxQuality = quality; }
+                        }
+                        compressedBlob = bestBlob || await new Promise(resolve => canvas.toBlob(resolve, mimeType, 0));
+                    } else {
+                        const quality = 1 - (parseInt(compressionSlider.value) / 100);
+                        const mimeType = originalImageBlob.type.includes('png') ? 'image/png' : 'image/jpeg';
+                        compressedBlob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, quality));
+                    }
+                    
+                    const url = URL.createObjectURL(compressedBlob);
+                    const resultImage = new Image();
+                    resultImage.onload = () => {
+                        previewAfter.innerHTML = `<img src="${url}" class="max-w-full max-h-48 object-contain rounded-lg">`;
+                        infoAfter.innerHTML = `<p class="font-bold text-green-400">${formatBytes(compressedBlob.size)}</p><p class="text-xs text-gray-400">${resultImage.width} x ${resultImage.height}</p>`;
+                        downloadBtn.href = url;
+                        downloadBtn.download = `compressed-${originalImageBlob.name}`;
+                        downloadBtn.classList.remove('hidden');
+                    };
+                    resultImage.src = url;
+                } catch(err) {
+                    showError(previewAfter, "Could not decode image. File may be corrupt or unsupported.");
+                }
+            };
+
+            compressBtn.addEventListener('click', () => handleCompression(false));
+            compressSizeBtn.addEventListener('click', () => handleCompression(true));
+        }
+
+        // --- Other Tools Setup ---
+        function setupPassportTool() {
+            const passportInput = document.getElementById('passport-input');
+            const passportBtn = document.getElementById('passport-btn');
+            const cropperContainer = document.getElementById('passport-cropper-container');
+            const previewImg = document.getElementById('passport-preview-img');
+            const cropperBox = document.getElementById('cropper-box');
+            const passportResult = document.getElementById('passport-result');
+            let cropperState = { dragging: false, resizing: false, startX: 0, startY: 0, startLeft: 0, startTop: 0, startWidth: 0, startHeight: 0 };
+
+            function updateCropperAspectRatio() {
+                const width = parseFloat(document.getElementById('passport-width').value);
+                const height = parseFloat(document.getElementById('passport-height').value);
+                if(isNaN(width) || isNaN(height) || width <= 0 || height <= 0) return;
+                const aspectRatio = width / height;
+                const currentWidth = cropperBox.offsetWidth;
+                cropperBox.style.height = `${currentWidth / aspectRatio}px`;
+            }
+            
+            ['passport-width', 'passport-height', 'passport-units'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updateCropperAspectRatio);
+            });
+
+            passportInput.addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        previewImg.src = event.target.result;
+                        previewImg.onload = () => {
+                            cropperContainer.querySelector('p').classList.add('hidden');
+                            previewImg.classList.remove('hidden');
+                            cropperBox.classList.remove('hidden');
+                            const containerRect = cropperContainer.getBoundingClientRect();
+                            const imgRect = previewImg.getBoundingClientRect();
+                            const width = parseFloat(document.getElementById('passport-width').value);
+                            const height = parseFloat(document.getElementById('passport-height').value);
+                            const aspectRatio = (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) ? 1 : width / height;
+                            const initialSize = Math.min(imgRect.width, imgRect.height) * 0.8;
+                            let initialWidth = initialSize;
+                            let initialHeight = initialSize / aspectRatio;
+                            if (initialHeight > imgRect.height) {
+                                initialHeight = imgRect.height * 0.8;
+                                initialWidth = initialHeight * aspectRatio;
+                            }
+                            cropperBox.style.width = `${initialWidth}px`;
+                            cropperBox.style.height = `${initialHeight}px`;
+                            cropperBox.style.left = `${(imgRect.width - initialWidth) / 2 + (imgRect.left - containerRect.left)}px`;
+                            cropperBox.style.top = `${(imgRect.height - initialHeight) / 2 + (imgRect.top - containerRect.top)}px`;
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            const handlePointerMove = (e) => {
+                if (!cropperState.dragging && !cropperState.resizing) return;
+                e.preventDefault();
+                const dx = e.clientX - cropperState.startX;
+                const dy = e.clientY - cropperState.startY;
+                const imgRect = previewImg.getBoundingClientRect();
+                const containerRect = cropperContainer.getBoundingClientRect();
+                const aspectRatio = cropperBox.offsetWidth / cropperBox.offsetHeight;
+                if (cropperState.dragging) {
+                    let newLeft = cropperState.startLeft + dx;
+                    let newTop = cropperState.startTop + dy;
+                    newLeft = Math.max(imgRect.left - containerRect.left, newLeft);
+                    newTop = Math.max(imgRect.top - containerRect.top, newTop);
+                    newLeft = Math.min(imgRect.right - containerRect.left - cropperBox.offsetWidth, newLeft);
+                    newTop = Math.min(imgRect.bottom - containerRect.top - cropperBox.offsetHeight, newTop);
+                    cropperBox.style.left = `${newLeft}px`;
+                    cropperBox.style.top = `${newTop}px`;
+                } else if (cropperState.resizing) {
+                    let newWidth = cropperState.startWidth + dx;
+                    let newHeight = newWidth / aspectRatio;
+                    if (cropperBox.offsetLeft + newWidth > imgRect.right - containerRect.left) {
+                        newWidth = imgRect.right - containerRect.left - cropperBox.offsetLeft;
+                        newHeight = newWidth / aspectRatio;
+                    }
+                    if (cropperBox.offsetTop + newHeight > imgRect.bottom - containerRect.top) {
+                        newHeight = imgRect.bottom - containerRect.top - cropperBox.offsetTop;
+                        newWidth = newHeight * aspectRatio;
+                    }
+                    if (newWidth > 20 && newHeight > 20) {
+                        cropperBox.style.width = `${newWidth}px`;
+                        cropperBox.style.height = `${newHeight}px`;
+                    }
+                }
+            };
+
+            const handlePointerUp = () => {
+                cropperState.dragging = false;
+                cropperState.resizing = false;
+                document.removeEventListener('pointermove', handlePointerMove);
+                document.removeEventListener('pointerup', handlePointerUp);
+            };
+
+            cropperBox.addEventListener('pointerdown', e => {
+                e.preventDefault();
+                if (e.target.classList.contains('resize-handle')) cropperState.resizing = true;
+                else cropperState.dragging = true;
+                cropperState.startX = e.clientX;
+                cropperState.startY = e.clientY;
+                cropperState.startLeft = cropperBox.offsetLeft;
+                cropperState.startTop = cropperBox.offsetTop;
+                cropperState.startWidth = cropperBox.offsetWidth;
+                cropperState.startHeight = cropperBox.offsetHeight;
+                document.addEventListener('pointermove', handlePointerMove);
+                document.addEventListener('pointerup', handlePointerUp);
+            });
+
+            passportBtn.addEventListener('click', () => {
+                const file = passportInput.files[0];
+                if (!file) { showError(passportResult, "Please upload an image first"); return; }
+                showSpinner(passportResult);
+                passportBtn.disabled = true;
+                const width = parseFloat(document.getElementById('passport-width').value);
+                const height = parseFloat(document.getElementById('passport-height').value);
+                const units = document.getElementById('passport-units').value;
+                const dpi = parseInt(document.getElementById('passport-dpi').value, 10);
+                if (isNaN(width) || isNaN(height) || isNaN(dpi) || width <= 0 || height <= 0 || dpi <= 0) {
+                    showError(passportResult, "Invalid dimensions or DPI");
+                    passportBtn.disabled = false;
+                    return;
+                }
+                let finalWidthPx, finalHeightPx;
+                if (units === 'px') {
+                    finalWidthPx = width; finalHeightPx = height;
+                } else {
+                    const inchPerCm = 0.393701;
+                    const conversionFactor = (units === 'cm') ? inchPerCm : 1;
+                    finalWidthPx = Math.round(width * conversionFactor * dpi);
+                    finalHeightPx = Math.round(height * conversionFactor * dpi);
+                }
+                const img = new Image();
+                img.onerror = () => {
+                    showError(passportResult, "Could not decode image. File may be corrupt or unsupported.");
+                    passportBtn.disabled = false;
+                };
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = finalWidthPx; canvas.height = finalHeightPx;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = "white"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    const scaleX = img.naturalWidth / previewImg.width;
+                    const scaleY = img.naturalHeight / previewImg.height;
+                    const cropX = (cropperBox.offsetLeft - (previewImg.getBoundingClientRect().left - cropperContainer.getBoundingClientRect().left)) * scaleX;
+                    const cropY = (cropperBox.offsetTop - (previewImg.getBoundingClientRect().top - cropperContainer.getBoundingClientRect().top)) * scaleY;
+                    const cropWidth = cropperBox.offsetWidth * scaleX;
+                    const cropHeight = cropperBox.offsetHeight * scaleY;
+                    ctx.drawImage(img, cropX, cropY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob(blob => {
+                        const resultUrl = URL.createObjectURL(blob);
+                        const resultImage = new Image();
+                        resultImage.onload = () => {
+                            displayResult(passportResult, resultImage, `passport-${file.name}`, blob.size);
+                        };
+                        resultImage.src = resultUrl;
+                    }, 'image/jpeg', 0.95);
+                    passportBtn.disabled = false;
+                }
+                img.src = previewImg.src;
+            });
+        }
+        function setupBackgroundTool() {
+            const bgInput = document.getElementById('bg-input');
+            const bgRemoveBtn = document.getElementById('bg-remove-btn');
+            const bgColorPicker = document.getElementById('bg-color-picker');
+            const bgResult = document.getElementById('bg-result');
+            const progressContainer = document.getElementById('bg-progress-container');
+            const progressLabel = document.getElementById('bg-progress-label');
+            const progressBar = document.getElementById('bg-progress-bar');
+            const previewArea = document.getElementById('bg-preview-area');
+
+            bgInput.addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (!file) { previewArea.classList.add('hidden'); return; }
+                const reader = new FileReader();
+                reader.onload = event => {
+                    const img = new Image();
+                    img.onerror = () => {
+                        previewArea.classList.remove('hidden');
+                        showError(previewArea, "Cannot preview: Image may be corrupt or unsupported.");
+                    };
+                    img.onload = () => displayImagePreview(previewArea, file, img);
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            document.querySelectorAll('.bg-color-btn').forEach(btn => {
+                btn.addEventListener('click', () => { bgColorPicker.value = btn.dataset.color; });
+            });
+
+            bgRemoveBtn.addEventListener('click', async () => {
+                const file = bgInput.files[0];
+                if (!file) { showError(bgResult, "Please upload an image first"); return; }
+                showSpinner(bgResult);
+                bgRemoveBtn.disabled = true;
+                progressContainer.classList.remove('hidden');
+                
+                let fakeProgressInterval;
+                const startFakeProgress = () => {
+                    let progress = 0;
+                    progressBar.style.width = '0%';
+                    progressLabel.textContent = 'Initializing model...';
+                    fakeProgressInterval = setInterval(() => {
+                        progress += 2;
+                        progressBar.style.width = `${Math.min(progress, 95)}%`;
+                    }, 100);
+                };
+
+                try {
+                    startFakeProgress();
+                    const blob = await removeBackground(file, {
+                        onProgress: (progress) => {
+                            clearInterval(fakeProgressInterval); // Stop fake progress once real progress starts
+                            progressLabel.textContent = progress.status;
+                            progressBar.style.width = `${progress.progress * 100}%`;
+                        }
+                    });
+                    
+                    const bgColor = bgColorPicker.value;
+                    const img = await createImageBitmap(blob);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = bgColor; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    
+                    canvas.toBlob(finalBlob => {
+                        const resultUrl = URL.createObjectURL(finalBlob);
+                        const resultImage = new Image();
+                        resultImage.onload = () => {
+                            displayResult(bgResult, resultImage, `bg-removed-${file.name}`, finalBlob.size);
+                        };
+                        resultImage.src = resultUrl;
+                    }, 'image/png');
+
+                } catch (err) { 
+                    showError(bgResult, `Failed to remove background. The image may be unsupported.`);
+                } finally { 
+                    clearInterval(fakeProgressInterval);
+                    bgRemoveBtn.disabled = false;
+                    progressContainer.classList.add('hidden');
+                }
+            });
+        }
+        function setupConvertTool() {
+            const convertInput = document.getElementById('convert-input');
+            const convertBtn = document.getElementById('convert-btn');
+            const convertResult = document.getElementById('convert-result');
+            const previewArea = document.getElementById('convert-preview-area');
+
+            convertInput.addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (!file) { previewArea.classList.add('hidden'); return; }
+                const reader = new FileReader();
+                reader.onload = event => {
+                    const img = new Image();
+                    img.onerror = () => {
+                        previewArea.classList.remove('hidden');
+                        showError(previewArea, "Cannot preview: Image may be corrupt or unsupported.");
+                    };
+                    img.onload = () => displayImagePreview(previewArea, file, img);
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            convertBtn.addEventListener('click', async () => {
+                const file = convertInput.files[0];
+                const format = document.querySelector('input[name="convert-format"]:checked').value;
+                if (!file) { showError(convertResult, "Please upload an image first"); return; }
+                showSpinner(convertResult);
+                convertBtn.disabled = true;
+                try {
+                    const img = await createImageBitmap(file);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    if (format === 'jpeg' && file.type.includes('png')) {
+                        ctx.fillStyle = 'white';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                    ctx.drawImage(img, 0, 0);
+                    const mimeType = `image/${format}`;
+                    
+                    canvas.toBlob(blob => {
+                        const resultUrl = URL.createObjectURL(blob);
+                        const resultImage = new Image();
+                        resultImage.onload = () => {
+                            displayResult(convertResult, resultImage, `${file.name.split('.')[0]}.${format}`, blob.size);
+                        };
+                        resultImage.src = resultUrl;
+                    }, mimeType, 1.0);
+
+                } catch (err) { 
+                    showError(convertResult, "Could not decode image. File may be corrupt or unsupported.");
+                } finally { 
+                    convertBtn.disabled = false; 
+                }
+            });
+        }
+        
+        // --- Initial Setup ---
+        setupTabs();
+
+    </script>
+</body>
+</html>
