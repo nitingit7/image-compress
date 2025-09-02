@@ -3,787 +3,1068 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Utility Suite (Polished Edition)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <title>Nitin Kumar - Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-bg: #0a0a0f;
+            --secondary-bg: #1a1a2e;
+            --accent-color: #6366f1;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8fafc;
+            --accent-color: #4f46e5;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --glass-bg: rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: #111827; /* Even darker background */
-        }
-        .usp-font {
             font-family: 'Poppins', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
         }
-        .glass-card {
-            background: rgba(31, 41, 55, 0.5); /* gray-800 with opacity */
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .tab-btn.active {
-            border-bottom-width: 3px;
-            background-color: rgba(55, 65, 81, 0.5); /* gray-700 with opacity */
-        }
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border-left-color: #60a5fa; /* blue-400 */
-            animation: spin 1s ease infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .file-input-dark::file-selector-button {
-            background-color: #374151; /* gray-700 */
-            border: 1px solid #4b5563; /* gray-600 */
-            color: #d1d5db; /* gray-300 */
-            transition: background-color 0.2s;
-        }
-        .file-input-dark::file-selector-button:hover {
-            background-color: #4b5563; /* gray-600 */
-        }
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
-            cursor: pointer;
-        }
-        input[type="range"]::-webkit-slider-runnable-track {
-            background: #374151; /* gray-700 */
-            height: 0.5rem;
-            border-radius: 0.5rem;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            margin-top: -4px;
-            background-color: #9ca3af; /* gray-400 */
-            height: 1.25rem;
-            width: 1.25rem;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-        }
-        input[type="range"]:hover::-webkit-slider-thumb {
-            background-color: #d1d5db; /* gray-300 */
-        }
-        .progress-bar {
-            background-color: #374151;
-            border-radius: 0.5rem;
-            overflow: hidden;
-        }
-        .progress-bar-inner {
-            background-color: #3b82f6;
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            transition: width 0.3s ease-in-out;
+            z-index: -1;
+            background: var(--primary-bg);
         }
-        /* Cropper styles */
-        .cropper-container {
+
+        .background-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(2deg); }
+            66% { transform: translate(20px, -10px) rotate(-2deg); }
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .hero-content {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .about-card {
+            padding: 2rem;
+            border-radius: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .education-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .education-info h3 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Links Section */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .link-card {
+            padding: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .link-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-color);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .link-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .link-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .link-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            background: var(--secondary-bg);
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .contact h2 {
+            margin-bottom: 1rem;
+        }
+
+        .contact p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .email-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            background: var(--gradient-secondary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
+        }
+
+        .email-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(99, 102, 241, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+
+        @keyframes typewriter {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .fade-in-left {
+            animation: fadeInLeft 1s ease-out;
+        }
+
+        .fade-in-right {
+            animation: fadeInRight 1s ease-out;
+        }
+
+        .bounce-animation {
+            animation: bounce 2s infinite;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        /* Enhanced hero animations */
+        .hero h1 {
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero p:nth-of-type(1) {
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .hero p:nth-of-type(2) {
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .hero p:nth-of-type(3) {
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+
+        .cta-button {
+            animation: fadeInUp 1s ease-out 1s both, pulse 2s infinite 2s;
+        }
+
+        /* Floating elements */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Glowing text effect */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(99, 102, 241, 0.5),
+                         0 0 20px rgba(99, 102, 241, 0.3),
+                         0 0 30px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Card hover animations */
+        .link-card {
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .link-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(99, 102, 241, 0.3);
+        }
+
+        .about-card {
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .about-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Icon animations */
+        .link-card .icon {
+            transition: all 0.3s ease;
+        }
+
+        .link-card:hover .icon {
+            transform: scale(1.2) rotate(5deg);
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+        }
+
+        /* Navbar animation */
+        .nav-links a {
             position: relative;
             overflow: hidden;
-            touch-action: none;
         }
-        #cropper-box {
+
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
             position: absolute;
-            border: 2px dashed #fff;
-            box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
-            cursor: move;
-            touch-action: none;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
         }
-        .resize-handle {
+
+        /* Section title animations */
+        .section-title {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title::after {
+            content: '';
             position: absolute;
-            width: 12px;
-            height: 12px;
-            background-color: #fff;
-            border: 1px solid #333;
-            border-radius: 50%;
-        }
-        .resize-handle.br {
-            bottom: -6px;
-            right: -6px;
-            cursor: se-resize;
-        }
-        /* Download Notification Toast */
-        #download-toast {
-            position: fixed;
-            top: 20px;
+            bottom: -5px;
             left: 50%;
-            transform: translate(-50%, -150%);
-            transition: transform 0.3s ease-in-out;
-            z-index: 9999;
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: translateX(-50%);
+            border-radius: 2px;
         }
-        #download-toast.show {
-            transform: translate(-50%, 0);
+
+        /* Enhanced email button */
+        .email-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .email-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .email-link:hover::before {
+            left: 100%;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: 0 0 20px 20px;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .contact {
+                padding: 2rem;
+            }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform-origin: left;
+            z-index: 1001;
+            transition: transform 0.1s ease;
+        }
+
+        /* Particle effect */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particle-float 15s linear infinite;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
-<body class="text-gray-200 flex items-center justify-center min-h-screen p-4">
+<body data-theme="dark">
+    <div class="background-animation"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="particles" id="particles"></div>
 
-    <div class="w-full max-w-6xl glass-card rounded-2xl shadow-2xl overflow-hidden">
-        <div class="p-6 md:p-8 border-b border-gray-700 text-center">
-            <h1 class="text-2xl md:text-3xl font-bold text-white">Image Utility Suite</h1>
-            <p class="mt-2 text-gray-400">High-performance tools for your image processing needs.</p>
-            <h2 class="usp-font mt-4 text-xl font-bold text-green-400 tracking-wider uppercase">100% Privacy 🔒</h2>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#links">Links</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+                <button class="mobile-menu-toggle" id="mobileToggle">☰</button>
+            </div>
         </div>
+    </nav>
 
-        <!-- Tabs -->
-        <div class="flex border-b border-gray-700 bg-gray-900/30 flex-wrap">
-            <button id="tab-compress" class="tab-btn flex-1 py-4 px-2 text-center font-semibold text-sm md:text-base text-gray-400 hover:bg-gray-700/50 focus:outline-none">Compressor</button>
-            <button id="tab-passport" class="tab-btn flex-1 py-4 px-2 text-center font-semibold text-sm md:text-base text-gray-400 hover:bg-gray-700/50 focus:outline-none">Passport Photo</button>
-            <button id="tab-background" class="tab-btn flex-1 py-4 px-2 text-center font-semibold text-sm md:text-base text-gray-400 hover:bg-gray-700/50 focus:outline-none">BG Remover</button>
-            <button id="tab-convert" class="tab-btn flex-1 py-4 px-2 text-center font-semibold text-sm md:text-base text-gray-400 hover:bg-gray-700/50 focus:outline-none">Converter</button>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Nitin Kumar</h1>
+                <p>Hello! I'm Nitin Kumar 👋</p>
+                <p>I've completed my B.Sc. (Hons) in Physics from Shivaji College under Delhi University. I'm deeply captivated by the worlds of game development, coding, and programming, and I'm the type of person to embrace learning with a 'why not' attitude. I'd say the things that really get me going are new exciting challenges and opportunities that enable me to pick new skills and, really, create, collaborate, and grow.</p>
+                <p>The portfolio is like an insight into what I've done, the projects I set out to build, the skills I strived to acquire, and the ideas I hold. Feel free to take a look, and you'll notice all the awesome things I'm involved in! 🚀</p>
+                <a href="#about" class="cta-button">Explore My Work</a>
+            </div>
         </div>
+    </section>
 
-        <div class="p-6 md:p-8">
-            <!-- Tool Sections will be dynamically loaded here -->
-            <div id="section-compress" class="tab-section hidden"></div>
-            <div id="section-passport" class="tab-section hidden"></div>
-            <div id="section-background" class="tab-section hidden"></div>
-            <div id="section-convert" class="tab-section hidden"></div>
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Welcome to my digital space! I'm Nitin Kumar, a passionate individual with a strong foundation in physics and a growing interest in technology and development.</p>
+                    <br>
+                    <p>My journey began with exploring the fundamental laws of nature through physics, which has given me a unique analytical perspective and problem-solving approach that I now apply to various creative and technical projects.</p>
+                    <br>
+                    <p>I believe in the power of continuous learning and enjoy working on projects that challenge conventional thinking and push boundaries.</p>
+                </div>
+                <div class="about-card">
+                    <div class="education-info">
+                        <h3>Education</h3>
+                        <p><strong>BSc(H) Physics</strong></p>
+                        <p>Shivaji College</p>
+                        <p>Delhi University</p>
+                    </div>
+                    <div class="education-info">
+                        <h3>Interests & Skills</h3>
+                        <p>Python • Office 365 • C++ • C# • HTML • CSS • Unity Engine • Machine Learning</p>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
+
+    <!-- Links Section -->
+    <section id="links">
+        <div class="container">
+            <h2 class="section-title">Connect & Explore</h2>
+            <div class="links-grid">
+                <a href="https://github.com/nitingit7" class="link-card" data-link="github" target="_blank">
+                    <span class="icon">💻</span>
+                    <h3>GitHub</h3>
+                    <p>Explore my code repositories and development projects</p>
+                </a>
+                <a href="https://nitingit7.itch.io/royal-runner" class="link-card floating" data-link="itch" target="_blank">
+                    <span class="icon">🎮</span>
+                    <h3>Itch.io</h3>
+                    <p>Check out my creative games and interactive experiences</p>
+                </a>
+                <a href="https://geniusphere.netlify.app/" class="link-card" data-link="webpage" target="_blank">
+                    <span class="icon">🌐</span>
+                    <h3>My Webpage</h3>
+                    <p>Visit my personal website for more content</p>
+                </a>
+                <a href="#" class="link-card" data-link="resume">
+                    <span class="icon">📄</span>
+                    <h3>Resume</h3>
+                    <p>Download my detailed resume and professional background</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="contact glass">
+                <h2>Let's Connect</h2>
+                <p>I'm always open to discussing new opportunities, collaborations, or just having a friendly conversation about physics, technology, or creative projects.</p>
+                <a href="mailto:nitinrohit5635@gmail.com" class="email-link">
+                    <span>✉️</span>
+                    <span>nitinrohit5635@gmail.com</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Nitin Kumar. Built with passion and physics-inspired thinking.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
         
-        <footer class="p-4 border-t border-gray-700 bg-gray-900/30 text-center">
-            <p class="text-sm text-gray-500">A Webpage By Nitin</p>
-        </footer>
-    </div>
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+        });
 
-    <!-- Download Notification Toast -->
-    <div id="download-toast" class="glass-card p-3 rounded-lg shadow-lg">
-        <p class="font-semibold text-white">Download Started</p>
-    </div>
-    
-    <script type="module">
-        // By using a modern ES module import, the browser automatically handles caching.
-        // After the first use, the 'removeBackground' library will be loaded from the browser cache,
-        // making subsequent uses much faster.
-        import removeBackground from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.0.0/dist/browser.mjs";
+        // Mobile Menu Toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
 
-        // --- Templates for Dynamic Loading ---
-        const compressorToolHTML = `
-            <div class="space-y-6">
-                <div>
-                    <h2 class="text-xl font-semibold mb-4 text-white">1. Upload Image</h2>
-                    <input type="file" id="compress-input" accept="image/jpeg, image/png, image/webp" class="file-input-dark block w-full max-w-md text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold">
-                </div>
-                <div id="compressor-main" class="hidden space-y-6">
-                    <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-semibold text-white">2. Set Compression</h2>
-                            <button id="compress-mode-toggle" class="text-sm text-blue-400 hover:text-blue-300">Switch to Target Size</button>
-                        </div>
-                        <div id="compress-mode-amount" class="space-y-4">
-                            <div class="flex items-center gap-4">
-                                <input type="range" id="compression-slider" min="0" max="100" value="20" class="w-full">
-                                <span id="compression-value" class="font-bold text-lg text-white w-16 text-center">20%</span>
-                                <button id="compress-btn" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-600 transition-colors flex-shrink-0">Compress</button>
-                            </div>
-                            <p class="text-xs text-gray-400 mt-1">Higher percentage means more compression (smaller file).</p>
-                        </div>
-                        <div id="compress-mode-size" class="hidden space-y-4">
-                            <div class="flex items-center gap-4">
-                                <label for="target-size" class="text-sm font-medium text-gray-300">Target Size (KB):</label>
-                                <input type="number" id="target-size" value="100" class="block w-32 rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white">
-                                <button id="compress-size-btn" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-600 transition-colors flex-shrink-0">Compress</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-6 pt-6">
-                        <div class="text-center p-4 glass-card rounded-lg">
-                            <h3 class="text-lg font-bold text-white mb-2">Before</h3>
-                            <div id="compress-preview-before" class="min-h-[200px] flex items-center justify-center"><p class="text-gray-500">Original image</p></div>
-                            <div id="compress-info-before" class="mt-2 text-sm text-gray-300"></div>
-                        </div>
-                        <div class="text-center p-4 glass-card rounded-lg">
-                            <h3 class="text-lg font-bold text-white mb-2">After</h3>
-                            <div id="compress-preview-after" class="min-h-[200px] flex items-center justify-center"><p class="text-gray-500">Compressed result</p></div>
-                            <div id="compress-info-after" class="mt-2 text-sm font-bold"></div>
-                            <a id="download-compressed-btn" href="#" download class="hidden mt-4 inline-block bg-gray-200 text-gray-900 font-bold py-2 px-6 rounded-lg hover:bg-white transition-colors">Download</a>
-                        </div>
-                    </div>
-                </div>`;
-        const passportToolHTML = `
-            <div class="grid md:grid-cols-2 gap-8">
-                <div>
-                    <h2 class="text-xl font-semibold mb-4 text-white">1. Upload & Configure</h2>
-                    <input type="file" id="passport-input" accept="image/*" class="file-input-dark block w-full text-sm mb-4">
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div><label for="passport-width" class="block text-sm font-medium text-gray-300">Width</label><input type="number" id="passport-width" value="3.5" class="mt-1 block w-full rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white"></div>
-                        <div><label for="passport-height" class="block text-sm font-medium text-gray-300">Height</label><input type="number" id="passport-height" value="4.5" class="mt-1 block w-full rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white"></div>
-                        <div><label for="passport-units" class="block text-sm font-medium text-gray-300">Units</label><select id="passport-units" class="mt-1 block w-full rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white"><option value="cm">cm</option><option value="in">in</option><option value="px">px</option></select></div>
-                        <div><label for="passport-dpi" class="block text-sm font-medium text-gray-300">DPI</label><input type="number" id="passport-dpi" value="300" class="mt-1 block w-full rounded-lg border-gray-600 bg-gray-800/50 p-2 text-white"></div>
-                    </div>
-                    <div id="passport-cropper-container" class="cropper-container w-full bg-gray-800/50 rounded-lg flex items-center justify-center min-h-[300px]"><p class="text-gray-400 p-4 text-center">Upload an image to start cropping.</p><img id="passport-preview-img" class="hidden max-w-full max-h-full object-contain"/><div id="cropper-box" class="hidden"><div class="resize-handle br"></div></div></div>
-                    <button id="passport-btn" class="mt-4 w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 disabled:bg-gray-600">Create Photo</button>
-                </div>
-                <div><h2 class="text-xl font-semibold mb-4 text-white">2. Result</h2><div id="passport-result" class="glass-card rounded-lg p-4 min-h-[150px] flex items-center justify-center"><p class="text-gray-400">Your passport photo will appear here.</p></div></div>
-            </div>`;
-        const backgroundToolHTML = `
-            <div class="grid md:grid-cols-2 gap-8">
-                <div>
-                    <h2 class="text-xl font-semibold mb-4 text-white">1. Upload & Configure</h2>
-                    <div class="space-y-4">
-                        <input type="file" id="bg-input" accept="image/*" class="file-input-dark block w-full text-sm">
-                        <div id="bg-preview-area" class="hidden"></div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300">Background Color</label>
-                            <div class="mt-1 flex items-center gap-2">
-                                <input type="color" id="bg-color-picker" value="#ffffff" class="w-10 h-10 rounded-lg border-gray-600">
-                                <button class="bg-color-btn p-2 rounded-lg border border-gray-500" data-color="#ffffff" style="background-color: #ffffff;"></button>
-                                <button class="bg-color-btn p-2 rounded-lg border border-gray-500" data-color="#0d6efd" style="background-color: #0d6efd;"></button>
-                                <button class="bg-color-btn p-2 rounded-lg border border-gray-500" data-color="#dc3545" style="background-color: #dc3545;"></button>
-                            </div>
-                        </div>
-                        <button id="bg-remove-btn" class="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-700 disabled:bg-gray-600">Remove Background</button>
-                    </div>
-                    <div class="mt-4 text-xs text-gray-400 p-3 bg-gray-800/50 rounded-lg">
-                        <strong>Note:</strong> This tool runs in your browser for 100% privacy. Results work best with clear subjects (e.g., people, products). Complex images with fine details like hair may not be perfect.
-                    </div>
-                    <div id="bg-progress-container" class="mt-4 space-y-2 hidden"><p id="bg-progress-label" class="text-sm text-center text-gray-300"></p><div class="progress-bar w-full h-2"><div id="bg-progress-bar" class="progress-bar-inner w-0"></div></div></div>
-                </div>
-                <div><h2 class="text-xl font-semibold mb-4 text-white">2. Result</h2><div id="bg-result" class="glass-card rounded-lg p-4 min-h-[150px] flex items-center justify-center"><p class="text-gray-400">Your final image will appear here.</p></div></div>
-            </div>`;
-        const convertToolHTML = `
-            <div class="grid md:grid-cols-2 gap-8">
-                <div>
-                    <h2 class="text-xl font-semibold mb-4 text-white">1. Upload & Select Format</h2>
-                    <div class="space-y-4">
-                        <input type="file" id="convert-input" accept="image/*" class="file-input-dark block w-full text-sm">
-                        <div id="convert-preview-area" class="hidden"></div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300">Convert to:</label>
-                            <fieldset class="mt-2"><div class="flex space-x-4">
-                                <label class="flex items-center"><input name="convert-format" type="radio" value="jpeg" class="h-4 w-4 border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-700" checked><span class="ml-2 text-sm text-gray-300">JPG</span></label>
-                                <label class="flex items-center"><input name="convert-format" type="radio" value="png" class="h-4 w-4 border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-700"><span class="ml-2 text-sm text-gray-300">PNG</span></label>
-                                <label class="flex items-center"><input name="convert-format" type="radio" value="webp" class="h-4 w-4 border-gray-600 text-purple-500 focus:ring-purple-500 bg-gray-700"><span class="ml-2 text-sm text-gray-300">WEBP</span></label>
-                            </div></fieldset>
-                        </div>
-                        <button id="convert-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 disabled:bg-gray-600">Convert Image</button>
-                    </div>
-                </div>
-                <div><h2 class="text-xl font-semibold mb-4 text-white">2. Result</h2><div id="convert-result" class="glass-card rounded-lg p-4 min-h-[150px] flex items-center justify-center"><p class="text-gray-400">Your converted image will appear here.</p></div></div>
-            </div>`;
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
 
-        // --- UI & Event Handling ---
-        function setupTabs() {
-            const tabs = document.querySelectorAll('.tab-btn');
-            const sections = document.querySelectorAll('.tab-section');
-            const tabColors = { compress: 'blue', passport: 'green', background: 'red', convert: 'purple' };
+        // Scroll Indicator
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        window.addEventListener('scroll', () => {
+            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.transform = `scaleX(${scrollPercent}%)`;
+        });
 
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabName = tab.id.split('-')[1];
-                    const newColor = tabColors[tabName];
-                    
-                    tabs.forEach(t => {
-                        const color = tabColors[t.id.split('-')[1]];
-                        t.classList.remove(`border-${color}-500`, `text-${color}-400`, 'active');
-                        t.classList.add('text-gray-400', 'hover:bg-gray-700/50');
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
                     });
-                    
-                    sections.forEach(s => s.classList.add('hidden'));
-                    
-                    tab.classList.add(`border-${newColor}-500`, `text-${newColor}-400`, 'active');
-                    tab.classList.remove('text-gray-400');
-                    
-                    const targetSection = document.getElementById(`section-${tabName}`);
-                    targetSection.classList.remove('hidden');
-                    
-                    if (!targetSection.dataset.loaded) {
-                        if (tabName === 'compress') targetSection.innerHTML = compressorToolHTML;
-                        else if (tabName === 'passport') targetSection.innerHTML = passportToolHTML;
-                        else if (tabName === 'background') targetSection.innerHTML = backgroundToolHTML;
-                        else if (tabName === 'convert') targetSection.innerHTML = convertToolHTML;
-                        
-                        setupTool(tabName);
-                        targetSection.dataset.loaded = 'true';
+                }
+                // Close mobile menu if open
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Particle Animation
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles
+        createParticles();
+
+        // Enhanced animations and interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Staggered animation for link cards
+            const linkCards = document.querySelectorAll('.link-card');
+            linkCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+                card.classList.add('fade-in');
+                
+                // Add individual floating animations with different delays
+                if (!card.classList.contains('floating')) {
+                    card.style.animation = `fadeInUp 0.8s ease-out ${index * 0.2}s both, float 6s ease-in-out infinite ${index * 1}s`;
+                }
+            });
+
+            // Typewriter effect for section titles
+            const sectionTitles = document.querySelectorAll('.section-title');
+            sectionTitles.forEach(title => {
+                const text = title.textContent;
+                title.textContent = '';
+                title.style.borderRight = '2px solid var(--accent-color)';
+                title.style.animation = 'blink 1s infinite';
+                
+                let i = 0;
+                const typeWriter = () => {
+                    if (i < text.length) {
+                        title.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 100);
+                    } else {
+                        title.style.borderRight = 'none';
+                        title.style.animation = 'none';
                     }
+                };
+                
+                // Start typewriter when element becomes visible
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && title.textContent === '') {
+                            setTimeout(typeWriter, 500);
+                        }
+                    });
+                });
+                observer.observe(title);
+            });
+
+            // Add glow effect to hero title
+            const heroTitle = document.querySelector('.hero h1');
+            heroTitle.classList.add('glow-text');
+
+            // Enhanced particle system
+            function createEnhancedParticles() {
+                const particlesContainer = document.getElementById('particles');
+                const particleCount = 80;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 15 + 's';
+                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                    
+                    // Random colors for particles
+                    const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981'];
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.width = Math.random() * 3 + 1 + 'px';
+                    particle.style.height = particle.style.width;
+                    
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            createEnhancedParticles();
+
+            // Mouse follow effect
+            const cursor = document.createElement('div');
+            cursor.style.cssText = `
+                position: fixed;
+                width: 20px;
+                height: 20px;
+                background: radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                transition: all 0.1s ease;
+                transform: translate(-50%, -50%);
+            `;
+            document.body.appendChild(cursor);
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+
+            // Enhanced hover effects for interactive elements
+            document.querySelectorAll('.link-card, .cta-button, .email-link').forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+                    cursor.style.background = 'radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%)';
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                    cursor.style.background = 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)';
                 });
             });
-            document.getElementById('tab-compress').click();
-        }
 
-        function setupTool(toolName) {
-            if (toolName === 'compress') setupCompressorTool();
-            else if (toolName === 'passport') setupPassportTool();
-            else if (toolName === 'background') setupBackgroundTool();
-            else if (toolName === 'convert') setupConvertTool();
-        }
-
-        function showSpinner(container) {
-            container.innerHTML = `<div class="flex items-center justify-center p-4"><div class="spinner"></div></div>`;
-        }
-        
-        function showError(container, message) {
-            container.innerHTML = `<p class="text-red-400 font-semibold text-center p-4">${message}</p>`;
-        }
-        
-        function displayImagePreview(container, file, image) {
-            container.classList.remove('hidden');
-            container.innerHTML = `
-                <div class="p-4 glass-card rounded-lg mt-4">
-                    <h3 class="text-lg font-semibold text-white mb-2">Preview</h3>
-                    <div class="text-center space-y-2">
-                        <img src="${image.src}" class="max-w-full max-h-48 mx-auto rounded-lg">
-                        <p class="text-sm font-medium text-gray-300">${file.name}</p>
-                        <p class="text-xs text-gray-400">${image.width} x ${image.height} &middot; ${formatBytes(file.size)}</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function displayResult(container, image, fileName, newSize) {
-            container.innerHTML = `
-                <div class="text-center space-y-2">
-                    <img src="${image.src}" class="max-w-full max-h-48 mx-auto rounded-lg shadow-md" alt="Result Image">
-                    <div class="text-sm">
-                        <p class="font-semibold text-white">${fileName}</p>
-                        <p class="text-gray-400">${image.width} x ${image.height}</p>
-                        <p class="font-bold text-green-400">${formatBytes(newSize)}</p>
-                    </div>
-                    <a href="${image.src}" download="${fileName}" class="download-link inline-block bg-gray-200 text-gray-900 font-bold py-2 px-6 rounded-lg hover:bg-white transition-colors">Download</a>
-                </div>
-            `;
-             container.querySelector('.download-link').addEventListener('click', showDownloadNotification);
-        }
-        
-        function formatBytes(bytes, decimals = 2) {
-            if (!+bytes) return '0 Bytes'
-            const k = 1024
-            const dm = decimals < 0 ? 0 : decimals
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-            const i = Math.floor(Math.log(bytes) / Math.log(k))
-            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
-        }
-
-        function showDownloadNotification() {
-            const toast = document.getElementById('download-toast');
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
-        }
-
-        // --- Compressor Logic ---
-        function setupCompressorTool() {
-            let originalImageBlob = null;
-            const compressInput = document.getElementById('compress-input');
-            const compressorMain = document.getElementById('compressor-main');
-            const previewBefore = document.getElementById('compress-preview-before');
-            const infoBefore = document.getElementById('compress-info-before');
-            const previewAfter = document.getElementById('compress-preview-after');
-            const infoAfter = document.getElementById('compress-info-after');
-            const downloadBtn = document.getElementById('download-compressed-btn');
-            const compressBtn = document.getElementById('compress-btn');
-            const compressSizeBtn = document.getElementById('compress-size-btn');
-            const compressionSlider = document.getElementById('compression-slider');
-            const compressionValue = document.getElementById('compression-value');
-            const targetSizeInput = document.getElementById('target-size');
-            const modeToggleBtn = document.getElementById('compress-mode-toggle');
-            const modeAmountDiv = document.getElementById('compress-mode-amount');
-            const modeSizeDiv = document.getElementById('compress-mode-size');
-            let currentMode = 'amount';
-
-            compressInput.addEventListener('change', e => {
-                const file = e.target.files[0];
-                if (!file) { compressorMain.classList.add('hidden'); return; }
-                originalImageBlob = file;
-                const reader = new FileReader();
-                reader.onload = event => {
-                    const img = new Image();
-                    img.onload = () => {
-                        previewBefore.innerHTML = `<img src="${img.src}" class="max-w-full max-h-48 object-contain rounded-lg">`;
-                        infoBefore.innerHTML = `<p>${img.width} x ${img.height}</p><p class="font-bold">${formatBytes(file.size)}</p>`;
-                        compressorMain.classList.remove('hidden');
-                        previewAfter.innerHTML = `<p class="text-gray-500">Compressed result</p>`;
-                        infoAfter.textContent = '';
-                        downloadBtn.classList.add('hidden');
-                    };
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-
-            compressionSlider.addEventListener('input', () => {
-                compressionValue.textContent = `${compressionSlider.value}%`;
-            });
-            
-            modeToggleBtn.addEventListener('click', () => {
-                currentMode = currentMode === 'amount' ? 'size' : 'amount';
-                modeAmountDiv.classList.toggle('hidden');
-                modeSizeDiv.classList.toggle('hidden');
-                modeToggleBtn.textContent = currentMode === 'amount' ? 'Switch to Target Size' : 'Switch to Compression Amount';
-            });
-
-            const handleCompression = async (isBySize) => {
-                if (!originalImageBlob) {
-                    showError(previewAfter, "Please upload an image first");
-                    return;
-                }
-                showSpinner(previewAfter);
-                infoAfter.textContent = '';
-                downloadBtn.classList.add('hidden');
+            // Parallax scrolling for background elements
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const backgroundAnimation = document.querySelector('.background-animation');
+                backgroundAnimation.style.transform = `translateY(${scrolled * 0.3}px)`;
                 
-                try {
-                    const img = await createImageBitmap(originalImageBlob);
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
+                // Parallax for floating cards
+                document.querySelectorAll('.floating').forEach((element, index) => {
+                    const speed = 0.1 + (index * 0.05);
+                    element.style.transform = `translateY(${scrolled * speed}px)`;
+                });
+            });
 
-                    let compressedBlob;
-
-                    if (isBySize) {
-                        const targetSize = parseInt(targetSizeInput.value, 10) * 1024;
-                        if (isNaN(targetSize) || targetSize <= 0) {
-                            showError(previewAfter, "Invalid target size"); return;
-                        }
-                        const mimeType = 'image/jpeg';
-                        let minQuality = 0, maxQuality = 1, bestBlob = null;
-                        for (let i = 0; i < 8; i++) {
-                            const quality = (minQuality + maxQuality) / 2;
-                            const blob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, quality));
-                            if (blob.size <= targetSize) { bestBlob = blob; minQuality = quality; } 
-                            else { maxQuality = quality; }
-                        }
-                        compressedBlob = bestBlob || await new Promise(resolve => canvas.toBlob(resolve, mimeType, 0));
-                    } else {
-                        const quality = 1 - (parseInt(compressionSlider.value) / 100);
-                        const mimeType = originalImageBlob.type.includes('png') ? 'image/png' : 'image/jpeg';
-                        compressedBlob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, quality));
-                    }
+            // Add ripple effect to buttons
+            document.querySelectorAll('.cta-button, .email-link, .theme-toggle').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
                     
-                    const url = URL.createObjectURL(compressedBlob);
-                    const resultImage = new Image();
-                    resultImage.onload = () => {
-                        previewAfter.innerHTML = `<img src="${url}" class="max-w-full max-h-48 object-contain rounded-lg">`;
-                        infoAfter.innerHTML = `<p class="font-bold text-green-400">${formatBytes(compressedBlob.size)}</p><p class="text-xs text-gray-400">${resultImage.width} x ${resultImage.height}</p>`;
-                        downloadBtn.href = url;
-                        downloadBtn.download = `compressed-${originalImageBlob.name}`;
-                        downloadBtn.classList.remove('hidden');
-                    };
-                    resultImage.src = url;
-                } catch(err) {
-                    showError(previewAfter, "Could not decode image. File may be corrupt or unsupported.");
-                }
-            };
-
-            compressBtn.addEventListener('click', () => handleCompression(false));
-            compressSizeBtn.addEventListener('click', () => handleCompression(true));
-        }
-
-        // --- Other Tools Setup ---
-        function setupPassportTool() {
-            const passportInput = document.getElementById('passport-input');
-            const passportBtn = document.getElementById('passport-btn');
-            const cropperContainer = document.getElementById('passport-cropper-container');
-            const previewImg = document.getElementById('passport-preview-img');
-            const cropperBox = document.getElementById('cropper-box');
-            const passportResult = document.getElementById('passport-result');
-            let cropperState = { dragging: false, resizing: false, startX: 0, startY: 0, startLeft: 0, startTop: 0, startWidth: 0, startHeight: 0 };
-
-            function updateCropperAspectRatio() {
-                const width = parseFloat(document.getElementById('passport-width').value);
-                const height = parseFloat(document.getElementById('passport-height').value);
-                if(isNaN(width) || isNaN(height) || width <= 0 || height <= 0) return;
-                const aspectRatio = width / height;
-                const currentWidth = cropperBox.offsetWidth;
-                cropperBox.style.height = `${currentWidth / aspectRatio}px`;
-            }
-            
-            ['passport-width', 'passport-height', 'passport-units'].forEach(id => {
-                document.getElementById(id).addEventListener('change', updateCropperAspectRatio);
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s ease-out;
+                        pointer-events: none;
+                    `;
+                    
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                });
             });
 
-            passportInput.addEventListener('change', e => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        previewImg.src = event.target.result;
-                        previewImg.onload = () => {
-                            cropperContainer.querySelector('p').classList.add('hidden');
-                            previewImg.classList.remove('hidden');
-                            cropperBox.classList.remove('hidden');
-                            const containerRect = cropperContainer.getBoundingClientRect();
-                            const imgRect = previewImg.getBoundingClientRect();
-                            const width = parseFloat(document.getElementById('passport-width').value);
-                            const height = parseFloat(document.getElementById('passport-height').value);
-                            const aspectRatio = (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) ? 1 : width / height;
-                            const initialSize = Math.min(imgRect.width, imgRect.height) * 0.8;
-                            let initialWidth = initialSize;
-                            let initialHeight = initialSize / aspectRatio;
-                            if (initialHeight > imgRect.height) {
-                                initialHeight = imgRect.height * 0.8;
-                                initialWidth = initialHeight * aspectRatio;
-                            }
-                            cropperBox.style.width = `${initialWidth}px`;
-                            cropperBox.style.height = `${initialHeight}px`;
-                            cropperBox.style.left = `${(imgRect.width - initialWidth) / 2 + (imgRect.left - containerRect.left)}px`;
-                            cropperBox.style.top = `${(imgRect.height - initialHeight) / 2 + (imgRect.top - containerRect.top)}px`;
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            const handlePointerMove = (e) => {
-                if (!cropperState.dragging && !cropperState.resizing) return;
-                e.preventDefault();
-                const dx = e.clientX - cropperState.startX;
-                const dy = e.clientY - cropperState.startY;
-                const imgRect = previewImg.getBoundingClientRect();
-                const containerRect = cropperContainer.getBoundingClientRect();
-                const aspectRatio = cropperBox.offsetWidth / cropperBox.offsetHeight;
-                if (cropperState.dragging) {
-                    let newLeft = cropperState.startLeft + dx;
-                    let newTop = cropperState.startTop + dy;
-                    newLeft = Math.max(imgRect.left - containerRect.left, newLeft);
-                    newTop = Math.max(imgRect.top - containerRect.top, newTop);
-                    newLeft = Math.min(imgRect.right - containerRect.left - cropperBox.offsetWidth, newLeft);
-                    newTop = Math.min(imgRect.bottom - containerRect.top - cropperBox.offsetHeight, newTop);
-                    cropperBox.style.left = `${newLeft}px`;
-                    cropperBox.style.top = `${newTop}px`;
-                } else if (cropperState.resizing) {
-                    let newWidth = cropperState.startWidth + dx;
-                    let newHeight = newWidth / aspectRatio;
-                    if (cropperBox.offsetLeft + newWidth > imgRect.right - containerRect.left) {
-                        newWidth = imgRect.right - containerRect.left - cropperBox.offsetLeft;
-                        newHeight = newWidth / aspectRatio;
-                    }
-                    if (cropperBox.offsetTop + newHeight > imgRect.bottom - containerRect.top) {
-                        newHeight = imgRect.bottom - containerRect.top - cropperBox.offsetTop;
-                        newWidth = newHeight * aspectRatio;
-                    }
-                    if (newWidth > 20 && newHeight > 20) {
-                        cropperBox.style.width = `${newWidth}px`;
-                        cropperBox.style.height = `${newHeight}px`;
+            // Add CSS for ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(2);
+                        opacity: 0;
                     }
                 }
-            };
+            `;
+            document.head.appendChild(style);
+        });
 
-            const handlePointerUp = () => {
-                cropperState.dragging = false;
-                cropperState.resizing = false;
-                document.removeEventListener('pointermove', handlePointerMove);
-                document.removeEventListener('pointerup', handlePointerUp);
-            };
-
-            cropperBox.addEventListener('pointerdown', e => {
-                e.preventDefault();
-                if (e.target.classList.contains('resize-handle')) cropperState.resizing = true;
-                else cropperState.dragging = true;
-                cropperState.startX = e.clientX;
-                cropperState.startY = e.clientY;
-                cropperState.startLeft = cropperBox.offsetLeft;
-                cropperState.startTop = cropperBox.offsetTop;
-                cropperState.startWidth = cropperBox.offsetWidth;
-                cropperState.startHeight = cropperBox.offsetHeight;
-                document.addEventListener('pointermove', handlePointerMove);
-                document.addEventListener('pointerup', handlePointerUp);
-            });
-
-            passportBtn.addEventListener('click', () => {
-                const file = passportInput.files[0];
-                if (!file) { showError(passportResult, "Please upload an image first"); return; }
-                showSpinner(passportResult);
-                passportBtn.disabled = true;
-                const width = parseFloat(document.getElementById('passport-width').value);
-                const height = parseFloat(document.getElementById('passport-height').value);
-                const units = document.getElementById('passport-units').value;
-                const dpi = parseInt(document.getElementById('passport-dpi').value, 10);
-                if (isNaN(width) || isNaN(height) || isNaN(dpi) || width <= 0 || height <= 0 || dpi <= 0) {
-                    showError(passportResult, "Invalid dimensions or DPI");
-                    passportBtn.disabled = false;
-                    return;
-                }
-                let finalWidthPx, finalHeightPx;
-                if (units === 'px') {
-                    finalWidthPx = width; finalHeightPx = height;
-                } else {
-                    const inchPerCm = 0.393701;
-                    const conversionFactor = (units === 'cm') ? inchPerCm : 1;
-                    finalWidthPx = Math.round(width * conversionFactor * dpi);
-                    finalHeightPx = Math.round(height * conversionFactor * dpi);
-                }
-                const img = new Image();
-                img.onerror = () => {
-                    showError(passportResult, "Could not decode image. File may be corrupt or unsupported.");
-                    passportBtn.disabled = false;
-                };
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = finalWidthPx; canvas.height = finalHeightPx;
-                    const ctx = canvas.getContext('2d');
-                    ctx.fillStyle = "white"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    const scaleX = img.naturalWidth / previewImg.width;
-                    const scaleY = img.naturalHeight / previewImg.height;
-                    const cropX = (cropperBox.offsetLeft - (previewImg.getBoundingClientRect().left - cropperContainer.getBoundingClientRect().left)) * scaleX;
-                    const cropY = (cropperBox.offsetTop - (previewImg.getBoundingClientRect().top - cropperContainer.getBoundingClientRect().top)) * scaleY;
-                    const cropWidth = cropperBox.offsetWidth * scaleX;
-                    const cropHeight = cropperBox.offsetHeight * scaleY;
-                    ctx.drawImage(img, cropX, cropY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
-                    canvas.toBlob(blob => {
-                        const resultUrl = URL.createObjectURL(blob);
-                        const resultImage = new Image();
-                        resultImage.onload = () => {
-                            displayResult(passportResult, resultImage, `passport-${file.name}`, blob.size);
-                        };
-                        resultImage.src = resultUrl;
-                    }, 'image/jpeg', 0.95);
-                    passportBtn.disabled = false;
-                }
-                img.src = previewImg.src;
-            });
-        }
-        function setupBackgroundTool() {
-            const bgInput = document.getElementById('bg-input');
-            const bgRemoveBtn = document.getElementById('bg-remove-btn');
-            const bgColorPicker = document.getElementById('bg-color-picker');
-            const bgResult = document.getElementById('bg-result');
-            const progressContainer = document.getElementById('bg-progress-container');
-            const progressLabel = document.getElementById('bg-progress-label');
-            const progressBar = document.getElementById('bg-progress-bar');
-            const previewArea = document.getElementById('bg-preview-area');
-
-            bgInput.addEventListener('change', e => {
-                const file = e.target.files[0];
-                if (!file) { previewArea.classList.add('hidden'); return; }
-                const reader = new FileReader();
-                reader.onload = event => {
-                    const img = new Image();
-                    img.onerror = () => {
-                        previewArea.classList.remove('hidden');
-                        showError(previewArea, "Cannot preview: Image may be corrupt or unsupported.");
-                    };
-                    img.onload = () => displayImagePreview(previewArea, file, img);
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
+        // Add some interactive hover effects
+        document.querySelectorAll('.link-card, .about-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
             });
             
-            document.querySelectorAll('.bg-color-btn').forEach(btn => {
-                btn.addEventListener('click', () => { bgColorPicker.value = btn.dataset.color; });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
             });
+        });
 
-            bgRemoveBtn.addEventListener('click', async () => {
-                const file = bgInput.files[0];
-                if (!file) { showError(bgResult, "Please upload an image first"); return; }
-                showSpinner(bgResult);
-                bgRemoveBtn.disabled = true;
-                progressContainer.classList.remove('hidden');
-                
-                let fakeProgressInterval;
-                const startFakeProgress = () => {
-                    let progress = 0;
-                    progressBar.style.width = '0%';
-                    progressLabel.textContent = 'Initializing model...';
-                    fakeProgressInterval = setInterval(() => {
-                        progress += 2;
-                        progressBar.style.width = `${Math.min(progress, 95)}%`;
-                    }, 100);
-                };
-
-                try {
-                    startFakeProgress();
-                    const blob = await removeBackground(file, {
-                        onProgress: (progress) => {
-                            clearInterval(fakeProgressInterval); // Stop fake progress once real progress starts
-                            progressLabel.textContent = progress.status;
-                            progressBar.style.width = `${progress.progress * 100}%`;
-                        }
-                    });
-                    
-                    const bgColor = bgColorPicker.value;
-                    const img = await createImageBitmap(blob);
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width; canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.fillStyle = bgColor; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, 0, 0);
-                    
-                    canvas.toBlob(finalBlob => {
-                        const resultUrl = URL.createObjectURL(finalBlob);
-                        const resultImage = new Image();
-                        resultImage.onload = () => {
-                            displayResult(bgResult, resultImage, `bg-removed-${file.name}`, finalBlob.size);
-                        };
-                        resultImage.src = resultUrl;
-                    }, 'image/png');
-
-                } catch (err) { 
-                    showError(bgResult, `Failed to remove background. The image may be unsupported.`);
-                } finally { 
-                    clearInterval(fakeProgressInterval);
-                    bgRemoveBtn.disabled = false;
-                    progressContainer.classList.add('hidden');
-                }
-            });
-        }
-        function setupConvertTool() {
-            const convertInput = document.getElementById('convert-input');
-            const convertBtn = document.getElementById('convert-btn');
-            const convertResult = document.getElementById('convert-result');
-            const previewArea = document.getElementById('convert-preview-area');
-
-            convertInput.addEventListener('change', e => {
-                const file = e.target.files[0];
-                if (!file) { previewArea.classList.add('hidden'); return; }
-                const reader = new FileReader();
-                reader.onload = event => {
-                    const img = new Image();
-                    img.onerror = () => {
-                        previewArea.classList.remove('hidden');
-                        showError(previewArea, "Cannot preview: Image may be corrupt or unsupported.");
-                    };
-                    img.onload = () => displayImagePreview(previewArea, file, img);
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-
-            convertBtn.addEventListener('click', async () => {
-                const file = convertInput.files[0];
-                const format = document.querySelector('input[name="convert-format"]:checked').value;
-                if (!file) { showError(convertResult, "Please upload an image first"); return; }
-                showSpinner(convertResult);
-                convertBtn.disabled = true;
-                try {
-                    const img = await createImageBitmap(file);
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width; canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    if (format === 'jpeg' && file.type.includes('png')) {
-                        ctx.fillStyle = 'white';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    }
-                    ctx.drawImage(img, 0, 0);
-                    const mimeType = `image/${format}`;
-                    
-                    canvas.toBlob(blob => {
-                        const resultUrl = URL.createObjectURL(blob);
-                        const resultImage = new Image();
-                        resultImage.onload = () => {
-                            displayResult(convertResult, resultImage, `${file.name.split('.')[0]}.${format}`, blob.size);
-                        };
-                        resultImage.src = resultUrl;
-                    }, mimeType, 1.0);
-
-                } catch (err) { 
-                    showError(convertResult, "Could not decode image. File may be corrupt or unsupported.");
-                } finally { 
-                    convertBtn.disabled = false; 
-                }
-            });
-        }
-        
-        // --- Initial Setup ---
-        setupTabs();
-
+        // Parallax effect for background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const backgroundAnimation = document.querySelector('.background-animation::before');
+            document.querySelector('.background-animation').style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
     </script>
 </body>
 </html>
